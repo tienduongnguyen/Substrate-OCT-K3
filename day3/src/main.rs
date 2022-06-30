@@ -8,7 +8,7 @@ fn main() {
 
 fn test_case_1() {
     //Test case 1: Khởi tạo đầu tiên danh sách phải rỗng
-    let mut school = School::new();
+    let mut school:School<u32> = School::new();
     println!("Test case 1: {:?}", school.get_list_student());
 }
 
@@ -31,44 +31,44 @@ fn test_case_3() {
     // với điểm số 4 thì ta có sinh viên nào: -> [Alice, Bob] not [Bob ,Alice]
     // vì cần tên theo alphabet
     let mut school = School::new();
-    school.add_student("Bob", 4);
-    school.add_student("Alice", 4);
-    school.add_student("Tom", 5);
+    school.add_student("Bob", "A+".to_string());
+    school.add_student("Alice", "A+".to_string());
+    school.add_student("Tom", "B".to_string());
     println!("Test case 3.1: {:?}", school.get_list_student());
-    println!("Test case 3.2: {:?}", school.get_list_grade(4));
+    println!("Test case 3.2: {:?}", school.get_list_grade("A+".to_string()));
 }
 
-pub struct School {
-    students: HashMap<String, u32>,
+pub struct School<T> {
+    students: HashMap<String, T>,
 }
 
-impl School {
-    pub fn new() -> School {
+impl<T: Ord> School<T> {
+    pub fn new() -> School<T> {
         School {
             students: HashMap::new(),
         }
     }
 
-    pub fn add_student(&mut self, name: &str, grade: u32) {
+    pub fn add_student(&mut self, name: &str, grade: T) {
         self.students.insert(name.to_string(), grade);
         
     }
 
-    pub fn get_list_student(&self) -> &HashMap<String, u32> {
+    pub fn get_list_student(&self) -> &HashMap<String, T> {
         &self.students 
     }
 
-    pub fn grades(&self) -> Vec<u32> {
-        let mut list_grade = Vec::new();
+    pub fn grades(&self) -> Vec<&T> {
+        let mut list_grade:Vec<&T> = Vec::new();
         for grade in self.students.values() {
-            list_grade.push(*grade);
+            list_grade.push(grade);
         }
         list_grade.sort();
         list_grade.dedup();
         list_grade
     }
 
-    pub fn get_list_grade(&self, grade: u32) -> Vec<String> {
+    pub fn get_list_grade(&self, grade: T) -> Vec<String> {
         let mut list_same_grade = Vec::new();
         for (name, grade_student) in self.students.iter() {
             if *grade_student == grade {
